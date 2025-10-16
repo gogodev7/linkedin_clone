@@ -1,7 +1,9 @@
-import cloudinary from "../lib/cloudinary.js";
+// Cloudinary removed; using local uploads via Multer
 import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
 import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
+import fs from "fs/promises";
+import path from "path";
 
 export const getFeedPosts = async (req, res) => {
 	try {
@@ -19,22 +21,17 @@ export const getFeedPosts = async (req, res) => {
 
 export const createPost = async (req, res) => {
 	try {
-		const { content, image } = req.body;
-		let newPost;
+		const { content } = req.body;
 
-		if (image) {
-			const imgResult = await cloudinary.uploader.upload(image);
-			newPost = new Post({
-				author: req.user._id,
-				content,
-				image: imgResult.secure_url,
-			});
-		} else {
-			newPost = new Post({
-				author: req.user._id,
-				content,
-			});
+		if (!req.file) {
+			return res.status(400).json({ message: "Image file is required" });
 		}
+
+		const newPost = new Post({
+			author: req.user._id,
+			content,
+			image: req.file.filename ? path.join('/uploads', req.file.filename) : undefined,
+		});
 
 		await newPost.save();
 
@@ -61,9 +58,10 @@ export const deletePost = async (req, res) => {
 			return res.status(403).json({ message: "You are not authorized to delete this post" });
 		}
 
-		// delete the image from cloudinary as well!
+		// delete the image file from local uploads folder
 		if (post.image) {
-			await cloudinary.uploader.destroy(post.image.split("/").pop().split(".")[0]);
+			const filePath = post.image.startsWith("/") ? post.image.slice(1) : post.image;
+			await fs.unlink(filePath).catch(() => {});
 		}
 
 		await Post.findByIdAndDelete(postId);

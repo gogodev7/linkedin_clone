@@ -4,6 +4,7 @@ import { axiosInstance } from "../lib/axios";
 import { toast } from "react-hot-toast";
 
 import { Camera, Clock, MapPin, UserCheck, UserPlus, X } from "lucide-react";
+import { getMediaUrl } from "../lib/media";
 
 const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 	const [isEditing, setIsEditing] = useState(false);
@@ -152,9 +153,9 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 		<div className='bg-white shadow rounded-lg mb-6'>
 			<div
 				className='relative h-48 rounded-t-lg bg-cover bg-center'
-				style={{
-					backgroundImage: `url('${editedData.bannerImg || userData.bannerImg || "/banner.png"}')`,
-				}}
+            style={{
+                    backgroundImage: `url('${editedData.bannerImg || getMediaUrl(userData.bannerImg) || "/banner.png"}')`,
+            }}
 			>
 				{isEditing && (
 					<label className='absolute top-2 right-2 bg-white p-2 rounded-full shadow cursor-pointer'>
@@ -172,9 +173,9 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 
 			<div className='p-4'>
 				<div className='relative -mt-20 mb-4'>
-					<img
-						className='w-32 h-32 rounded-full mx-auto object-cover'
-						src={editedData.profilePicture || userData.profilePicture || "/avatar.png"}
+                    <img
+                        className='w-32 h-32 rounded-full mx-auto object-cover'
+                        src={editedData.profilePicture || getMediaUrl(userData.profilePicture) || "/avatar.png"}
 						alt={userData.name}
 					/>
 

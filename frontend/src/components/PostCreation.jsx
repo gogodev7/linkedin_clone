@@ -12,9 +12,9 @@ const PostCreation = ({ user }) => {
 	const queryClient = useQueryClient();
 
 	const { mutate: createPostMutation, isPending } = useMutation({
-		mutationFn: async (postData) => {
-			const res = await axiosInstance.post("/posts/create", postData, {
-				headers: { "Content-Type": "application/json" },
+		mutationFn: async (formData) => {
+			const res = await axiosInstance.post("/posts/create", formData, {
+				headers: { "Content-Type": "multipart/form-data" },
 			});
 			return res.data;
 		},
@@ -30,10 +30,12 @@ const PostCreation = ({ user }) => {
 
 	const handlePostCreation = async () => {
 		try {
-			const postData = { content };
-			if (image) postData.image = await readFileAsDataURL(image);
-
-			createPostMutation(postData);
+			const formData = new FormData();
+			formData.append("content", content);
+			if (image) {
+				formData.append("image", image);
+			}
+			createPostMutation(formData);
 		} catch (error) {
 			console.error("Error in handlePostCreation:", error);
 		}

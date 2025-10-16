@@ -22,10 +22,44 @@ const ProfilePage = () => {
 		queryFn: () => axiosInstance.get(`/users/${username}`),
 	});
 
-	const { mutate: updateProfile } = useMutation({
-		mutationFn: async (updatedData) => {
-			await axiosInstance.put("/users/profile", updatedData);
-		},
+    const { mutate: updateProfile } = useMutation({
+        mutationFn: async (updatedData) => {
+            const formData = new FormData();
+
+            const appendField = async (key, value) => {
+                if (value === undefined || value === null) return;
+
+                // Convert data URLs for image fields into Blobs
+                if ((key === "profilePicture" || key === "bannerImg") && typeof value === "string") {
+                    if (value.startsWith("data:")) {
+                        const resp = await fetch(value);
+                        const blob = await resp.blob();
+                        const filename = key + (blob.type && blob.type.includes("/") ? 
+                            "." + blob.type.split("/")[1].split(";")[0] : ".png");
+                        formData.append(key, blob, filename);
+                    }
+                    // If value is an existing URL/path, skip sending - backend updates only when a file is provided
+                    return;
+                }
+
+                // Serialize complex fields
+                if (Array.isArray(value) || typeof value === "object") {
+                    formData.append(key, JSON.stringify(value));
+                } else {
+                    formData.append(key, value);
+                }
+            };
+
+            // Append all provided fields
+            for (const [key, value] of Object.entries(updatedData || {})) {
+                // eslint-disable-next-line no-await-in-loop
+                await appendField(key, value);
+            }
+
+            await axiosInstance.put("/users/profile", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+        },
 		onSuccess: () => {
 			toast.success("Profile updated successfully");
 			queryClient.invalidateQueries(["userProfile", username]);

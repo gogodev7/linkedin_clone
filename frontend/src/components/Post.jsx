@@ -7,6 +7,7 @@ import { Loader, MessageCircle, Send, Share2, ThumbsUp, Trash2 } from "lucide-re
 import { formatDistanceToNow } from "date-fns";
 
 import PostAction from "./PostAction";
+import { getMediaUrl } from "../lib/media";
 
 const Post = ({ post }) => {
 	const { postId } = useParams();
@@ -91,9 +92,9 @@ const Post = ({ post }) => {
 			<div className='p-4'>
 				<div className='flex items-center justify-between mb-4'>
 					<div className='flex items-center'>
-						<Link to={`/profile/${post?.author?.username}`}>
-							<img
-								src={post.author.profilePicture || "/avatar.png"}
+                        <Link to={`/profile/${post?.author?.username}`}>
+                            <img
+                                src={getMediaUrl(post.author.profilePicture) || "/avatar.png"}
 								alt={post.author.name}
 								className='size-10 rounded-full mr-3'
 							/>
@@ -116,7 +117,7 @@ const Post = ({ post }) => {
 					)}
 				</div>
 				<p className='mb-4'>{post.content}</p>
-				{post.image && <img src={post.image} alt='Post content' className='rounded-lg w-full mb-4' />}
+                {post.image && <img src={getMediaUrl(post.image)} alt='Post content' className='rounded-lg w-full mb-4' />}
 
 				<div className='flex justify-between text-info'>
 					<PostAction
@@ -139,8 +140,8 @@ const Post = ({ post }) => {
 					<div className='mb-4 max-h-60 overflow-y-auto'>
 						{comments.map((comment) => (
 							<div key={comment._id} className='mb-2 bg-base-100 p-2 rounded flex items-start'>
-								<img
-									src={comment.user.profilePicture || "/avatar.png"}
+                                <img
+                                    src={getMediaUrl(comment.user.profilePicture) || "/avatar.png"}
 									alt={comment.user.name}
 									className='w-8 h-8 rounded-full mr-2 flex-shrink-0'
 								/>

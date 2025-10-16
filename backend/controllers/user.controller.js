@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import cloudinary from "../lib/cloudinary.js";
+import path from "path";
 
 export const getSuggestedConnections = async (req, res) => {
 	try {
@@ -45,8 +45,7 @@ export const updateProfile = async (req, res) => {
 			"headline",
 			"about",
 			"location",
-			"profilePicture",
-			"bannerImg",
+            // profilePicture and bannerImg are handled via multipart files
 			"skills",
 			"experience",
 			"education",
@@ -55,20 +54,33 @@ export const updateProfile = async (req, res) => {
 		const updatedData = {};
 
 		for (const field of allowedFields) {
-			if (req.body[field]) {
-				updatedData[field] = req.body[field];
+			if (req.body[field] !== undefined) {
+				let value = req.body[field];
+				// For multipart/form-data, arrays/objects may arrive JSON-encoded strings
+				if (
+					(field === "skills" || field === "experience" || field === "education") &&
+					typeof value === "string"
+				) {
+					try {
+						value = JSON.parse(value);
+					} catch (e) {
+						// leave as-is if not valid JSON
+					}
+				}
+				updatedData[field] = value;
 			}
 		}
 
-		if (req.body.profilePicture) {
-			const result = await cloudinary.uploader.upload(req.body.profilePicture);
-			updatedData.profilePicture = result.secure_url;
-		}
+        const profileFile = req.files?.profilePicture?.[0];
+        const bannerFile = req.files?.bannerImg?.[0];
 
-		if (req.body.bannerImg) {
-			const result = await cloudinary.uploader.upload(req.body.bannerImg);
-			updatedData.bannerImg = result.secure_url;
-		}
+        if (profileFile) {
+            updatedData.profilePicture = profileFile.filename ? path.join('/uploads', profileFile.filename) : undefined;
+        }
+
+        if (bannerFile) {
+            updatedData.bannerImg = bannerFile.filename ? path.join('/uploads', bannerFile.filename) : undefined;
+        }
 
 		const user = await User.findByIdAndUpdate(req.user._id, { $set: updatedData }, { new: true }).select(
 			"-password"
