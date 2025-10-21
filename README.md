@@ -1,9 +1,5 @@
 <h1 align="center">Linkedin Clone ✨</h1>
 
-![Demo App](/frontend/public/screenshot-for-readme.png)
-
-[Video Tutorial on Youtube](https://youtu.be/Ycg48pVp3SU)
-
 About This Course:
 
 -   🚀 Project Setup
@@ -41,6 +37,7 @@ CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
 
 CLIENT_URL=http://localhost:5173
+VITE_API_BASE_URL=http://localhost:5000/api/v1
 ```
 
 ### Run this app locally
