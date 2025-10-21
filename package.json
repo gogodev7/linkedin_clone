@@ -22,6 +22,7 @@
 		"mailtrap": "^3.4.0",
 		"mongoose": "^8.6.1",
 		"multer": "^2.0.2",
+		"socket.io": "^4.8.1",
 		"uuid": "^13.0.0"
 	},
 	"devDependencies": {
