@@ -150,12 +150,12 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 
 	return (
 		<div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
-			<div
-				className='relative h-48 bg-cover bg-center'
-            style={{
-                    backgroundImage: `url('${editedData.bannerImg || getMediaUrl(userData.bannerImg) || "/banner.png"}')`,
-            }}
-			>
+				<div
+					className='relative h-48 bg-cover bg-center'
+					style={{
+						backgroundImage: `url('${editedData.bannerImg || getMediaUrl(userData.bannerImg) || "/banner.png"}')`,
+					}}
+				>
 				{isEditing && (
 					<label className='absolute top-4 right-4 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-50 transition-colors'>
 						<Camera size={20} />
@@ -172,11 +172,11 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 
 			<div className='p-6'>
 				<div className='relative -mt-20 mb-6'>
-                    <img
-                        className='w-32 h-32 rounded-full mx-auto object-cover border-4 border-white'
-                        src={editedData.profilePicture || getMediaUrl(userData.profilePicture) || "/avatar.png"}
-						alt={userData.name}
-					/>
+										<img
+											className='w-32 h-32 rounded-full mx-auto object-cover border-4 border-white'
+											src={editedData.profilePicture || getMediaUrl(userData.profilePicture) || "/avatar.png"}
+											alt={userData.name}
+										/>
 
 					{isEditing && (
 						<label className='absolute bottom-2 right-1/2 transform translate-x-16 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-50 transition-colors'>

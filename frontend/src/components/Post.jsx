@@ -92,13 +92,13 @@ const Post = ({ post }) => {
 			<div className='p-4'>
 				<div className='flex items-center justify-between mb-4'>
 					<div className='flex items-center'>
-                        <Link to={`/profile/${post?.author?.username}`}>
-                            <img
-                                src={getMediaUrl(post.author.profilePicture) || "/avatar.png"}
-								alt={post.author.name}
-								className='w-12 h-12 rounded-full mr-3 object-cover'
-							/>
-						</Link>
+												<Link to={`/profile/${post?.author?.username}`}>
+													<img
+														src={getMediaUrl(post.author.profilePicture) || "/avatar.png"}
+														alt={post.author.name}
+														className='w-12 h-12 rounded-full mr-3 object-cover'
+													/>
+												</Link>
 
 						<div>
 							<Link to={`/profile/${post?.author?.username}`}>
@@ -117,7 +117,9 @@ const Post = ({ post }) => {
 					)}
 				</div>
 				<p className='mb-4 text-gray-800 leading-relaxed'>{post.content}</p>
-                {post.image && <img src={getMediaUrl(post.image)} alt='Post content' className='rounded-lg w-full mb-4' />}
+								{post.image && (
+									<img src={getMediaUrl(post.image)} alt='Post content' className='rounded-lg w-full mb-4' />
+								)}
 
 				<div className='flex justify-between text-gray-600 border-t border-gray-100 pt-3'>
 					<PostAction
@@ -140,11 +142,11 @@ const Post = ({ post }) => {
 					<div className='mb-4 max-h-60 overflow-y-auto space-y-3 pt-4'>
 						{comments.map((comment) => (
 							<div key={comment._id} className='flex items-start space-x-3'>
-                                <img
-                                    src={getMediaUrl(comment.user.profilePicture) || "/avatar.png"}
-									alt={comment.user.name}
-									className='w-8 h-8 rounded-full flex-shrink-0 object-cover'
-								/>
+																<img
+																	src={getMediaUrl(comment.user.profilePicture) || "/avatar.png"}
+																	alt={comment.user.name}
+																	className='w-8 h-8 rounded-full flex-shrink-0 object-cover'
+																/>
 								<div className='flex-grow'>
 									<div className='flex items-center mb-1'>
 										<span className='font-semibold text-gray-800 mr-2'>{comment.user.name}</span>
@@ -159,11 +161,11 @@ const Post = ({ post }) => {
 					</div>
 
 					<form onSubmit={handleAddComment} className='flex items-center space-x-2'>
-						<img
-							src={authUser.profilePicture || "/avatar.png"}
-							alt={authUser.name}
-							className='w-8 h-8 rounded-full object-cover'
-						/>
+																<img
+																	src={getMediaUrl(authUser.profilePicture) || "/avatar.png"}
+																	alt={authUser.name}
+																	className='w-8 h-8 rounded-full object-cover'
+																/>
 						<input
 							type='text'
 							value={newComment}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { Image, Loader, Video, Calendar, Smile } from "lucide-react";
+import { getMediaUrl } from "../lib/media";
 
 const PostCreation = ({ user }) => {
 	const [content, setContent] = useState("");
@@ -73,12 +74,12 @@ const PostCreation = ({ user }) => {
 
 	return (
 		<div className='bg-white rounded-lg shadow-sm border border-gray-200 p-4'>
-			<div className='flex space-x-3 mb-4'>
-				<img 
-					src={user.profilePicture || "/avatar.png"} 
-					alt={user.name} 
-					className='w-12 h-12 rounded-full object-cover' 
-				/>
+				<div className='flex space-x-3 mb-4'>
+					<img
+						src={getMediaUrl(user.profilePicture) || "/avatar.png"}
+						alt={user.name}
+						className='w-12 h-12 rounded-full object-cover'
+					/>
 				<textarea
 					placeholder="What's on your mind?"
 					className='flex-1 p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors'

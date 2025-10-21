@@ -100,11 +100,11 @@ const Navbar = () => {
 													onClick={handleSearchResultClick}
 													className='flex items-center p-3 hover:bg-gray-50 transition-colors'
 												>
-													<img
-														src={user.profilePicture || "/avatar.png"}
-														alt={user.name}
-														className='w-10 h-10 rounded-full object-cover mr-3'
-													/>
+																					<img
+																						src={getMediaUrl(user.profilePicture) || "/avatar.png"}
+																						alt={user.name}
+																						className='w-10 h-10 rounded-full object-cover mr-3'
+																					/>
 													<div>
 														<p className='font-medium text-gray-800'>{user.name}</p>
 														<p className='text-sm text-gray-600'>{user.headline}</p>
