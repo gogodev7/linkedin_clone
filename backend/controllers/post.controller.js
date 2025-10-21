@@ -5,6 +5,21 @@ import { sendCommentNotificationEmail } from "../emails/emailHandlers.js";
 import fs from "fs/promises";
 import path from "path";
 
+export const getAllPosts = async (req, res) => {
+	try {
+		const posts = await Post.find()
+			.populate("author", "name username profilePicture headline")
+			.populate("comments.user", "name profilePicture")
+			.sort({ createdAt: -1 })
+			.limit(50); // Limit to prevent performance issues
+
+		res.status(200).json(posts);
+	} catch (error) {
+		console.error("Error in getAllPosts controller:", error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+
 export const getFeedPosts = async (req, res) => {
 	try {
 		const posts = await Post.find({ author: { $in: [...req.user.connections, req.user._id] } })
@@ -23,17 +38,20 @@ export const createPost = async (req, res) => {
 	try {
 		const { content } = req.body;
 
-		if (!req.file) {
-			return res.status(400).json({ message: "Image file is required" });
+		if (!content || content.trim() === '') {
+			return res.status(400).json({ message: "Post content is required" });
 		}
 
 		const newPost = new Post({
 			author: req.user._id,
 			content,
-			image: req.file.filename ? path.join('/uploads', req.file.filename) : undefined,
+			image: req.file?.filename ? path.join('/uploads', req.file.filename) : undefined,
 		});
 
 		await newPost.save();
+
+		// Populate the author field for the response
+		await newPost.populate("author", "name username profilePicture headline");
 
 		res.status(201).json(newPost);
 	} catch (error) {

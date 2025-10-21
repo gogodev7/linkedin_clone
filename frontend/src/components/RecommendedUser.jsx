@@ -59,7 +59,7 @@ const RecommendedUser = ({ user }) => {
 			case "pending":
 				return (
 					<button
-						className='px-3 py-1 rounded-full text-sm bg-yellow-500 text-white flex items-center'
+						className='px-4 py-1 rounded-full text-sm bg-gray-100 text-gray-600 flex items-center'
 						disabled
 					>
 						<Clock size={16} className='mr-1' />
@@ -68,16 +68,16 @@ const RecommendedUser = ({ user }) => {
 				);
 			case "received":
 				return (
-					<div className='flex gap-2 justify-center'>
+					<div className='flex gap-2'>
 						<button
 							onClick={() => acceptRequest(connectionStatus.data.requestId)}
-							className={`rounded-full p-1 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white`}
+							className='rounded-full p-2 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white transition-colors'
 						>
 							<Check size={16} />
 						</button>
 						<button
 							onClick={() => rejectRequest(connectionStatus.data.requestId)}
-							className={`rounded-full p-1 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white`}
+							className='rounded-full p-2 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-600 transition-colors'
 						>
 							<X size={16} />
 						</button>
@@ -86,7 +86,7 @@ const RecommendedUser = ({ user }) => {
 			case "connected":
 				return (
 					<button
-						className='px-3 py-1 rounded-full text-sm bg-green-500 text-white flex items-center'
+						className='px-4 py-1 rounded-full text-sm bg-gray-100 text-gray-600 flex items-center'
 						disabled
 					>
 						<UserCheck size={16} className='mr-1' />
@@ -96,7 +96,7 @@ const RecommendedUser = ({ user }) => {
 			default:
 				return (
 					<button
-						className='px-3 py-1 rounded-full text-sm border border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-200 flex items-center'
+						className='px-4 py-1 rounded-full text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors flex items-center'
 						onClick={handleConnect}
 					>
 						<UserPlus size={16} className='mr-1' />
@@ -113,16 +113,16 @@ const RecommendedUser = ({ user }) => {
 	};
 
 	return (
-		<div className='flex items-center justify-between mb-4'>
+		<div className='flex items-center justify-between py-3'>
             <Link to={`/profile/${user.username}`} className='flex items-center flex-grow'>
                 <img
                     src={getMediaUrl(user.profilePicture) || "/avatar.png"}
 					alt={user.name}
-					className='w-12 h-12 rounded-full mr-3'
+					className='w-12 h-12 rounded-full mr-3 object-cover'
 				/>
 				<div>
-					<h3 className='font-semibold text-sm'>{user.name}</h3>
-					<p className='text-xs text-info'>{user.headline}</p>
+					<h3 className='font-semibold text-sm text-gray-800 hover:text-blue-600'>{user.name}</h3>
+					<p className='text-xs text-gray-600'>{user.headline}</p>
 				</div>
 			</Link>
 			{renderButton()}

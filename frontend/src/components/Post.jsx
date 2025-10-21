@@ -88,7 +88,7 @@ const Post = ({ post }) => {
 	};
 
 	return (
-		<div className='bg-secondary rounded-lg shadow mb-4'>
+		<div className='bg-white rounded-lg shadow-sm border border-gray-200'>
 			<div className='p-4'>
 				<div className='flex items-center justify-between mb-4'>
 					<div className='flex items-center'>
@@ -96,80 +96,85 @@ const Post = ({ post }) => {
                             <img
                                 src={getMediaUrl(post.author.profilePicture) || "/avatar.png"}
 								alt={post.author.name}
-								className='size-10 rounded-full mr-3'
+								className='w-12 h-12 rounded-full mr-3 object-cover'
 							/>
 						</Link>
 
 						<div>
 							<Link to={`/profile/${post?.author?.username}`}>
-								<h3 className='font-semibold'>{post.author.name}</h3>
+								<h3 className='font-semibold text-gray-800 hover:text-blue-600'>{post.author.name}</h3>
 							</Link>
-							<p className='text-xs text-info'>{post.author.headline}</p>
-							<p className='text-xs text-info'>
+							<p className='text-sm text-gray-600'>{post.author.headline}</p>
+							<p className='text-xs text-gray-500'>
 								{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
 							</p>
 						</div>
 					</div>
 					{isOwner && (
-						<button onClick={handleDeletePost} className='text-red-500 hover:text-red-700'>
+						<button onClick={handleDeletePost} className='text-gray-400 hover:text-red-500 transition-colors'>
 							{isDeletingPost ? <Loader size={18} className='animate-spin' /> : <Trash2 size={18} />}
 						</button>
 					)}
 				</div>
-				<p className='mb-4'>{post.content}</p>
+				<p className='mb-4 text-gray-800 leading-relaxed'>{post.content}</p>
                 {post.image && <img src={getMediaUrl(post.image)} alt='Post content' className='rounded-lg w-full mb-4' />}
 
-				<div className='flex justify-between text-info'>
+				<div className='flex justify-between text-gray-600 border-t border-gray-100 pt-3'>
 					<PostAction
-						icon={<ThumbsUp size={18} className={isLiked ? "text-blue-500  fill-blue-300" : ""} />}
+						icon={<ThumbsUp size={20} className={isLiked ? "text-blue-600 fill-blue-600" : ""} />}
 						text={`Like (${post.likes.length})`}
 						onClick={handleLikePost}
 					/>
 
 					<PostAction
-						icon={<MessageCircle size={18} />}
+						icon={<MessageCircle size={20} />}
 						text={`Comment (${comments.length})`}
 						onClick={() => setShowComments(!showComments)}
 					/>
-					<PostAction icon={<Share2 size={18} />} text='Share' />
+					<PostAction icon={<Share2 size={20} />} text='Share' />
 				</div>
 			</div>
 
 			{showComments && (
-				<div className='px-4 pb-4'>
-					<div className='mb-4 max-h-60 overflow-y-auto'>
+				<div className='px-4 pb-4 border-t border-gray-100'>
+					<div className='mb-4 max-h-60 overflow-y-auto space-y-3 pt-4'>
 						{comments.map((comment) => (
-							<div key={comment._id} className='mb-2 bg-base-100 p-2 rounded flex items-start'>
+							<div key={comment._id} className='flex items-start space-x-3'>
                                 <img
                                     src={getMediaUrl(comment.user.profilePicture) || "/avatar.png"}
 									alt={comment.user.name}
-									className='w-8 h-8 rounded-full mr-2 flex-shrink-0'
+									className='w-8 h-8 rounded-full flex-shrink-0 object-cover'
 								/>
 								<div className='flex-grow'>
 									<div className='flex items-center mb-1'>
-										<span className='font-semibold mr-2'>{comment.user.name}</span>
-										<span className='text-xs text-info'>
+										<span className='font-semibold text-gray-800 mr-2'>{comment.user.name}</span>
+										<span className='text-xs text-gray-500'>
 											{formatDistanceToNow(new Date(comment.createdAt))}
 										</span>
 									</div>
-									<p>{comment.content}</p>
+									<p className='text-gray-700'>{comment.content}</p>
 								</div>
 							</div>
 						))}
 					</div>
 
-					<form onSubmit={handleAddComment} className='flex items-center'>
+					<form onSubmit={handleAddComment} className='flex items-center space-x-2'>
+						<img
+							src={authUser.profilePicture || "/avatar.png"}
+							alt={authUser.name}
+							className='w-8 h-8 rounded-full object-cover'
+						/>
 						<input
 							type='text'
 							value={newComment}
 							onChange={(e) => setNewComment(e.target.value)}
 							placeholder='Add a comment...'
-							className='flex-grow p-2 rounded-l-full bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary'
+							className='flex-grow p-3 rounded-full bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 						/>
 
 						<button
 							type='submit'
-							className='bg-primary text-white p-2 rounded-r-full hover:bg-primary-dark transition duration-300'
+							className='bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors'
 							disabled={isAddingComment}
 						>
 							{isAddingComment ? <Loader size={18} className='animate-spin' /> : <Send size={18} />}

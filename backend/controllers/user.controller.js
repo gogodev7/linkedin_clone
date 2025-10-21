@@ -1,6 +1,32 @@
 import User from "../models/user.model.js";
 import path from "path";
 
+export const searchUsers = async (req, res) => {
+	try {
+		const { q } = req.query;
+		
+		if (!q || q.trim() === '') {
+			return res.json([]);
+		}
+
+		const users = await User.find({
+			$or: [
+				{ name: { $regex: q, $options: 'i' } },
+				{ username: { $regex: q, $options: 'i' } },
+				{ headline: { $regex: q, $options: 'i' } }
+			],
+			_id: { $ne: req.user._id } // Exclude current user
+		})
+		.select("name username profilePicture headline")
+		.limit(10);
+
+		res.json(users);
+	} catch (error) {
+		console.error("Error in searchUsers controller:", error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
+
 export const getSuggestedConnections = async (req, res) => {
 	try {
 		const currentUser = await User.findById(req.user._id).select("connections");

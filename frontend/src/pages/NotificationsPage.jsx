@@ -96,27 +96,32 @@ const NotificationsPage = () => {
 	};
 
 	return (
-		<div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
-			<div className='col-span-1 lg:col-span-1'>
-				<Sidebar user={authUser} />
+		<div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
+			<div className='hidden lg:block lg:col-span-3'>
+				<div className='sticky top-20'>
+					<Sidebar user={authUser} />
+				</div>
 			</div>
-			<div className='col-span-1 lg:col-span-3'>
-				<div className='bg-white rounded-lg shadow p-6'>
-					<h1 className='text-2xl font-bold mb-6'>Notifications</h1>
+			<div className='col-span-1 lg:col-span-9'>
+				<div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6'>
+					<h1 className='text-2xl font-semibold mb-6 text-gray-800'>Notifications</h1>
 
 					{isLoading ? (
-						<p>Loading notifications...</p>
+						<div className='flex items-center justify-center py-8'>
+							<div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+							<span className='ml-2 text-gray-600'>Loading notifications...</span>
+						</div>
 					) : notifications && notifications.data.length > 0 ? (
-						<ul>
+						<div className='space-y-4'>
 							{notifications.data.map((notification) => (
-								<li
+								<div
 									key={notification._id}
-									className={`bg-white border rounded-lg p-4 my-4 transition-all hover:shadow-md ${
-										!notification.read ? "border-blue-500" : "border-gray-200"
+									className={`bg-white border rounded-lg p-4 transition-all hover:shadow-md ${
+										!notification.read ? "border-blue-200 bg-blue-50" : "border-gray-200"
 									}`}
 								>
 									<div className='flex items-start justify-between'>
-										<div className='flex items-center space-x-4'>
+										<div className='flex items-start space-x-4'>
 											<Link to={`/profile/${notification.relatedUser.username}`}>
 												<img
 													src={notification.relatedUser.profilePicture || "/avatar.png"}
@@ -125,14 +130,14 @@ const NotificationsPage = () => {
 												/>
 											</Link>
 
-											<div>
-												<div className='flex items-center gap-2'>
-													<div className='p-1 bg-gray-100 rounded-full'>
+											<div className='flex-1'>
+												<div className='flex items-center gap-2 mb-2'>
+													<div className='p-2 bg-gray-100 rounded-full'>
 														{renderNotificationIcon(notification.type)}
 													</div>
-													<p className='text-sm'>{renderNotificationContent(notification)}</p>
+													<p className='text-sm text-gray-800'>{renderNotificationContent(notification)}</p>
 												</div>
-												<p className='text-xs text-gray-500 mt-1'>
+												<p className='text-xs text-gray-500 mb-2'>
 													{formatDistanceToNow(new Date(notification.createdAt), {
 														addSuffix: true,
 													})}
@@ -145,7 +150,7 @@ const NotificationsPage = () => {
 											{!notification.read && (
 												<button
 													onClick={() => markAsReadMutation(notification._id)}
-													className='p-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors'
+													className='p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors'
 													aria-label='Mark as read'
 												>
 													<Eye size={16} />
@@ -154,18 +159,26 @@ const NotificationsPage = () => {
 
 											<button
 												onClick={() => deleteNotificationMutation(notification._id)}
-												className='p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors'
+												className='p-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition-colors'
 												aria-label='Delete notification'
 											>
 												<Trash2 size={16} />
 											</button>
 										</div>
 									</div>
-								</li>
+								</div>
 							))}
-						</ul>
+						</div>
 					) : (
-						<p>No notification at the moment.</p>
+						<div className='text-center py-8'>
+							<div className='text-gray-400 mb-4'>
+								<svg className='w-16 h-16 mx-auto' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1} d='M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 1 0-15 0v5h5l-5 5-5-5h5v-5a7.5 7.5 0 1 1 15 0v5z' />
+								</svg>
+							</div>
+							<h3 className='text-lg font-semibold text-gray-800 mb-2'>No notifications</h3>
+							<p className='text-gray-600'>You're all caught up! Check back later for updates.</p>
+						</div>
 					)}
 				</div>
 			</div>

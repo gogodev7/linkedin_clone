@@ -4,6 +4,7 @@ import upload from "../lib/multerConfig.js";
 import {
 	createPost,
 	getFeedPosts,
+	getAllPosts,
 	deletePost,
 	getPostById,
 	createComment,
@@ -13,6 +14,7 @@ import {
 const router = express.Router();
 
 router.get("/", protectRoute, getFeedPosts);
+router.get("/all", protectRoute, getAllPosts);
 router.post("/create", protectRoute, upload.single("image"), createPost);
 router.delete("/delete/:id", protectRoute, deletePost);
 router.get("/:id", protectRoute, getPostById);
