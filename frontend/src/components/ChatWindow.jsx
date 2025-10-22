@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { axiosInstance } from "../lib/axios";
 import { socket } from "../lib/socket";
 
-export default function ChatWindow({ convo, currentUser }) {
+export default function ChatWindow({ convo, currentUser, connectedUsers = [] }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -98,9 +98,24 @@ export default function ChatWindow({ convo, currentUser }) {
 
   if (!convo) return <div className="flex-1 flex items-center justify-center">Select a conversation</div>;
 
+  const other = convo.participants.find(p => p._id !== currentUser._id) || {};
+  const isOnline = connectedUsers.some(u => u._id === other._id);
+
   return (
     <div className="flex-1 flex flex-col">
-      <div className="p-4 border-b font-semibold">Conversation</div>
+      <div className="p-3 border-b flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <img src={other.profilePicture || '/avatar.png'} alt={other.name} className="w-10 h-10 rounded-full object-cover" />
+          <div className="min-w-0">
+            <div className="text-sm font-semibold truncate">{other.name || 'Conversation'}</div>
+            <div className="text-xs text-gray-500 truncate">{isOnline ? 'Active now' : (other.headline || '')}</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="text-gray-500 hover:text-gray-700">📎</button>
+          <button className="text-gray-500 hover:text-gray-700">⋯</button>
+        </div>
+      </div>
       <div className="p-4 flex-1 overflow-auto">
         {messages.map((m) => (
           <div key={m._id || m.id} className={`mb-3 ${m.sender && m.sender._id === currentUser._id ? "text-right" : "text-left"}`}>

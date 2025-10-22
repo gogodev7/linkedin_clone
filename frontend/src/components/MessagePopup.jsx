@@ -19,6 +19,7 @@ export default function MessagePopup() {
   });
   const [convos, setConvos] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState({});
   const [connectedUsers, setConnectedUsers] = useState([]);
   const [showConnected, setShowConnected] = useState(false);
@@ -118,6 +119,19 @@ export default function MessagePopup() {
     load();
   }, [showConnected, currentUser]);
 
+  const formatTime = (iso) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - d.getTime()) / 1000);
+    const isToday = d.toDateString() === now.toDateString();
+    if (diff < 60) return 'now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm';
+    if (isToday) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+    return d.toLocaleDateString();
+  };
+
   useEffect(() => {
     const handler = (msg) => {
       // quick update: move convo to top and append message if open
@@ -180,7 +194,10 @@ export default function MessagePopup() {
               <div className="border-b">
                 <div className="p-2 flex items-center justify-between">
                   <div className="font-medium flex items-center gap-2">
-                    Messages {!minimized && selected && `- ${selected.participants.find(p => p._id !== currentUser._id)?.name}`}
+                    <div className="flex items-center gap-2">
+                      <span>Messages</span>
+                      {!minimized && selected && <span className="text-sm text-gray-500">- {selected.participants.find(p => p._id !== currentUser._id)?.name}</span>}
+                    </div>
                     {minimized && Object.values(unreadCounts).reduce((a, b) => a + b, 0) > 0 && (
                       <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
                         {Object.values(unreadCounts).reduce((a, b) => a + b, 0)}
@@ -194,6 +211,12 @@ export default function MessagePopup() {
                       title="Show connected users"
                     >
                       👥 {connectedUsers.length}
+                    </button>
+                    <button
+                      onClick={() => setShowConnected(true)}
+                      className="ml-2 bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition-colors"
+                    >
+                      New message
                     </button>
                     <button
                       onClick={() => setMinimized(m => !m)}
@@ -241,29 +264,55 @@ export default function MessagePopup() {
               </div>
               {!minimized && (
                 <div className="flex-1 flex">
-                  <div className="w-1/3 border-r overflow-auto">
-                    {convos.map((c) => (
-                      <div
-                        key={c._id}
-                        className={`p-2 hover:bg-gray-50 cursor-pointer ${selected?._id === c._id ? 'bg-blue-50' : ''} relative`}
-                        onClick={() => {
-                          setSelected(c);
-                          setUnreadCounts(prev => ({ ...prev, [c._id]: 0 }));
-                        }}>
-                        <div className="font-medium flex items-center justify-between">
-                          {c.participants.find(p => p._id !== currentUser._id)?.name || 'Conversation'}
-                          {unreadCounts[c._id] > 0 && (
-                            <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                              {unreadCounts[c._id]}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-sm text-gray-600">{c.lastMessage || 'No messages yet'}</div>
-                      </div>
-                    ))}
+                  <div className="w-1/3 border-r overflow-auto bg-white">
+                    <div className="p-2 relative">
+                      <span className="absolute left-3 top-2 text-gray-400">🔍</span>
+                      <input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search messages or people"
+                        className="w-full border rounded px-8 py-1 text-sm"
+                      />
+                    </div>
+                    <div>
+                      {convos.filter(c => {
+                        if (!search.trim()) return true;
+                        const other = c.participants.find(p => p._id !== currentUser._id);
+                        const name = other?.name || '';
+                        return name.toLowerCase().includes(search.toLowerCase()) || (c.lastMessage || '').toLowerCase().includes(search.toLowerCase());
+                      }).map((c) => {
+                        const other = c.participants.find(p => p._id !== currentUser._id) || {};
+                        const isSelected = selected?._id === c._id;
+                        const isOnline = connectedUsers.some(u => u._id === other._id);
+                        return (
+                          <div
+                            key={c._id}
+                            className={`flex items-start gap-3 p-3 cursor-pointer hover:bg-gray-50 ${isSelected ? 'bg-blue-50' : ''}`}
+                            onClick={() => { setSelected(c); setUnreadCounts(prev => ({ ...prev, [c._id]: 0 })); }}
+                          >
+                            <div className="relative">
+                              <img src={other.profilePicture || '/avatar.png'} alt={other.name} className="w-10 h-10 rounded-full object-cover" />
+                              {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <div className={`text-sm ${unreadCounts[c._id] > 0 ? 'font-semibold' : 'font-medium'} truncate`}>{other.name || 'Conversation'}</div>
+                                <div className="text-xs text-gray-400">{formatTime(c.updatedAt)}</div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className={`text-sm truncate ${unreadCounts[c._id] > 0 ? 'text-gray-800 font-medium' : 'text-gray-600'}`}>{c.lastMessage || 'No messages yet'}</div>
+                                {unreadCounts[c._id] > 0 && (
+                                  <div className="bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">{unreadCounts[c._id]}</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <ChatWindow convo={selected} currentUser={currentUser} />
+                  <div className="flex-1 bg-white">
+                    <ChatWindow convo={selected} currentUser={currentUser} connectedUsers={connectedUsers} />
                   </div>
                 </div>
               )}
