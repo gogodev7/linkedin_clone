@@ -11,3 +11,13 @@ try {
 }
 
 export const socket = io(socketUrl || undefined, { transports: ["websocket", "polling"] });
+
+export function registerSocket(user) {
+  try {
+    if (!user) return;
+    const userId = typeof user === 'string' ? user : user._id;
+    socket.emit('register', userId);
+  } catch (err) {
+    console.warn('registerSocket error', err);
+  }
+}

@@ -118,3 +118,20 @@ export const updateProfile = async (req, res) => {
 		res.status(500).json({ message: "Server error" });
 	}
 };
+
+export const getConnectedUsers = async (req, res) => {
+	try {
+		// access io stored on app locals (set in server.js)
+		const io = req.app.get('io');
+		if (!io || !io.connectedUsersMap) return res.json([]);
+
+		const ids = Array.from(io.connectedUsersMap.keys()).filter(id => id !== req.user._id.toString());
+		if (!ids.length) return res.json([]);
+
+		const users = await User.find({ _id: { $in: ids } }).select('name username profilePicture headline');
+		res.json(users);
+	} catch (err) {
+		console.error('Error in getConnectedUsers controller:', err);
+		res.status(500).json({ message: 'Server error' });
+	}
+};

@@ -1,12 +1,13 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import upload from "../lib/multerConfig.js";
-import { getSuggestedConnections, getPublicProfile, updateProfile, searchUsers } from "../controllers/user.controller.js";
+import { getSuggestedConnections, getPublicProfile, updateProfile, searchUsers, getConnectedUsers } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 router.get("/search", protectRoute, searchUsers);
 router.get("/suggestions", protectRoute, getSuggestedConnections);
+router.get('/connected', protectRoute, getConnectedUsers);
 router.get("/:username", protectRoute, getPublicProfile);
 
 router.put(
