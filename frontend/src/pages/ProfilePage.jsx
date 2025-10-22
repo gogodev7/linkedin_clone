@@ -52,7 +52,6 @@ const ProfilePage = () => {
 
             // Append all provided fields
             for (const [key, value] of Object.entries(updatedData || {})) {
-                // eslint-disable-next-line no-await-in-loop
                 await appendField(key, value);
             }
 

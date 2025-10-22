@@ -3,12 +3,15 @@ import { useMemo, useState } from "react";
 import { axiosInstance } from "../lib/axios";
 import { toast } from "react-hot-toast";
 
-import { Camera, Clock, MapPin, UserCheck, UserPlus, X } from "lucide-react";
+import { Clock, MapPin, UserCheck, UserPlus, X } from "lucide-react";
 import { getMediaUrl } from "../lib/media";
+import EditProfileModal from "./EditProfileModal";
+import Avatar from "./Avatar";
+
 
 const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
-	const [isEditing, setIsEditing] = useState(false);
-	const [editedData, setEditedData] = useState({});
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedData, setEditedData] = useState({});
 	const queryClient = useQueryClient();
 
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -132,124 +135,48 @@ const ProfileHeader = ({ userData, onSave, isOwnProfile }) => {
 		}
 	};
 
-	const handleImageChange = (event) => {
-		const file = event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				setEditedData((prev) => ({ ...prev, [event.target.name]: reader.result }));
-			};
-			reader.readAsDataURL(file);
-		}
-	};
-
-	const handleSave = () => {
-		onSave(editedData);
-		setIsEditing(false);
-	};
+	// Image handling and save are done by EditProfileModal; ProfilePage handles the update mutation
 
 	return (
 		<div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
-				<div
-					className='relative h-48 bg-cover bg-center'
-					style={{
-						backgroundImage: `url('${editedData.bannerImg || getMediaUrl(userData.bannerImg) || "/banner.png"}')`,
-					}}
-				>
-				{isEditing && (
-					<label className='absolute top-4 right-4 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-50 transition-colors'>
-						<Camera size={20} />
-						<input
-							type='file'
-							className='hidden'
-							name='bannerImg'
-							onChange={handleImageChange}
-							accept='image/*'
-						/>
-					</label>
-				)}
-			</div>
+			<div
+				className='relative h-48 bg-cover bg-center'
+				style={{
+					backgroundImage: `url('${editedData.bannerImg || getMediaUrl(userData.bannerImg) || "/banner.png"}')`,
+				}}
+			/>
 
 			<div className='p-6'>
 				<div className='relative -mt-20 mb-6'>
-										<img
-											className='w-32 h-32 rounded-full mx-auto object-cover border-4 border-white'
-											src={editedData.profilePicture || getMediaUrl(userData.profilePicture) || "/avatar.png"}
-											alt={userData.name}
-										/>
-
-					{isEditing && (
-						<label className='absolute bottom-2 right-1/2 transform translate-x-16 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-50 transition-colors'>
-							<Camera size={20} />
-							<input
-								type='file'
-								className='hidden'
-								name='profilePicture'
-								onChange={handleImageChange}
-								accept='image/*'
-							/>
-						</label>
-					)}
+					<Avatar src={editedData.profilePicture || getMediaUrl(userData.profilePicture)} name={userData.name} size={128} className='mx-auto border-4 border-white' />
 				</div>
 
 				<div className='text-center mb-6'>
-					{isEditing ? (
-						<input
-							type='text'
-							value={editedData.name ?? userData.name}
-							onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
-							className='text-2xl font-semibold mb-2 text-center w-full bg-gray-50 border border-gray-200 rounded-lg p-2'
-						/>
-					) : (
-						<h1 className='text-2xl font-semibold mb-2 text-gray-800'>{userData.name}</h1>
-					)}
-
-					{isEditing ? (
-						<input
-							type='text'
-							value={editedData.headline ?? userData.headline}
-							onChange={(e) => setEditedData({ ...editedData, headline: e.target.value })}
-							className='text-gray-600 text-center w-full bg-gray-50 border border-gray-200 rounded-lg p-2'
-						/>
-					) : (
-						<p className='text-gray-600 mb-2'>{userData.headline}</p>
-					)}
+					<h1 className='text-2xl font-semibold mb-2 text-gray-800'>{userData.name}</h1>
+					<p className='text-gray-600 mb-2'>{userData.headline}</p>
 
 					<div className='flex justify-center items-center'>
 						<MapPin size={16} className='text-gray-500 mr-1' />
-						{isEditing ? (
-							<input
-								type='text'
-								value={editedData.location ?? userData.location}
-								onChange={(e) => setEditedData({ ...editedData, location: e.target.value })}
-								className='text-gray-600 text-center bg-gray-50 border border-gray-200 rounded-lg p-1'
-							/>
-						) : (
-							<span className='text-gray-600'>{userData.location}</span>
-						)}
+						<span className='text-gray-600'>{userData.location}</span>
 					</div>
 				</div>
 
 				{isOwnProfile ? (
-					isEditing ? (
-						<button
-							className='w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition-colors font-medium'
-							onClick={handleSave}
-						>
-							Save Profile
-						</button>
-					) : (
-						<button
-							onClick={() => setIsEditing(true)}
-							className='w-full bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition-colors font-medium'
-						>
-							Edit Profile
-						</button>
-					)
+					<div className='flex justify-center gap-2'>
+						<button onClick={() => setIsEditing(true)} className='bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition-colors font-medium'>Edit profile</button>
+					</div>
 				) : (
 					<div className='flex justify-center'>{renderConnectionButton()}</div>
 				)}
 			</div>
+			{isEditing && (
+				<EditProfileModal
+					isOpen={isEditing}
+					onClose={() => setIsEditing(false)}
+					userData={userData}
+					onSave={(data) => { setEditedData(data); onSave(data); }}
+				/>
+			)}
 		</div>
 	);
 };

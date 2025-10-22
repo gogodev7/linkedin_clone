@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
 import { socket, registerSocket } from "../lib/socket";
 import ChatWindow from "./ChatWindow";
+import Avatar from "./Avatar";
 
 export default function MessagePopup() {
   const { data: currentUser } = useQuery({ queryKey: ["authUser"], queryFn: async () => {
@@ -291,7 +292,7 @@ export default function MessagePopup() {
                             onClick={() => { setSelected(c); setUnreadCounts(prev => ({ ...prev, [c._id]: 0 })); }}
                           >
                             <div className="relative">
-                              <img src={other.profilePicture || '/avatar.png'} alt={other.name} className="w-10 h-10 rounded-full object-cover" />
+                              <Avatar src={other.profilePicture} name={other.name} size={40} className="w-10 h-10" />
                               {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />}
                             </div>
                             <div className="flex-1 min-w-0">

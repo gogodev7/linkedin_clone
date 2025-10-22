@@ -6,7 +6,7 @@ let socketUrl = undefined;
 try {
   const url = new URL(API_BASE, window.location.origin);
   socketUrl = url.origin;
-} catch (e) {
+} catch {
   socketUrl = undefined;
 }
 

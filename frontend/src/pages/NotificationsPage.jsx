@@ -48,18 +48,17 @@ const NotificationsPage = () => {
   const renderNotificationContent = (notification) => {
     switch (notification.type) {
       case "like":
-        return (
-          <span>
-            <strong>{notification.relatedUser.name}</strong> liked your post
-          </span>
-        );
+            return (
+              <span>
+                <strong>{notification.relatedUser.name}</strong> liked your post
+              </span>
+            );
       case "comment":
         return (
-          <span>
+            <span>
             <Link to={`/profile/${notification.relatedUser.username}`} className='font-bold'>
               {notification.relatedUser.name}
-            </Link>{" "}
-            commented on your post
+            </Link>&nbsp;commented on your post
           </span>
         );
       case "connectionAccepted":
@@ -176,7 +175,7 @@ const NotificationsPage = () => {
                 </svg>
               </div>
               <h3 className='text-lg font-semibold text-gray-800 mb-2'>No notifications</h3>
-              <p className='text-gray-600'>You're all caught up! Check back later for updates.</p>
+              <p className='text-gray-600'>You&apos;re all caught up! Check back later for updates.</p>
             </div>
           )}
         </div>
