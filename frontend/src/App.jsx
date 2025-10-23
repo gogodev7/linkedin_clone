@@ -12,6 +12,10 @@ import NetworkPage from "./pages/NetworkPage";
 import PostPage from "./pages/PostPage";
 import ProfilePage from "./pages/ProfilePage";
 import MessagesPage from "./pages/MessagesPage";
+import JobsPage from "./pages/JobsPage";
+import JobDetail from "./pages/JobDetail";
+import SavedJobs from "./pages/SavedJobs";
+import Applications from "./pages/Applications";
 
 function App() {
 	const { data: authUser, isLoading } = useQuery({
@@ -42,6 +46,10 @@ function App() {
 				<Route path='/messages' element={authUser ? <MessagesPage /> : <Navigate to={"/login"} />} />
 				<Route path='/post/:postId' element={authUser ? <PostPage /> : <Navigate to={"/login"} />} />
 				<Route path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />} />
+				<Route path='/jobs' element={authUser ? <JobsPage /> : <Navigate to={'/login'} />} />
+				<Route path='/jobs/:id' element={authUser ? <JobDetail /> : <Navigate to={'/login'} />} />
+				<Route path='/jobs/saved' element={authUser ? <SavedJobs /> : <Navigate to={'/login'} />} />
+				<Route path='/jobs/applications' element={authUser ? <Applications /> : <Navigate to={'/login'} />} />
 			</Routes>
 			<Toaster />
 		</Layout>

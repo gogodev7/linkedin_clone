@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
 import { Link } from "react-router-dom";
-import { Bell, Home, LogOut, User, Users, Search } from "lucide-react";
+import { Bell, Home, LogOut, User, Users, Search, Briefcase } from "lucide-react";
 import { getMediaUrl } from '../../lib/media';
 import { useState, useRef, useEffect } from "react";
 
@@ -81,6 +81,8 @@ const Navbar = () => {
 					{authUser && (
 						<div className='hidden md:flex flex-1 max-w-md mx-4' ref={searchRef}>
 							<div className='relative w-full'>
+			
+						{/* Jobs nav link moved down near My Network */}
 								<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
 								<input
 									type='text'
@@ -146,6 +148,14 @@ const Navbar = () => {
 											{unreadConnectionRequestsCount}
 										</span>
 									)}
+								</Link>
+
+								<Link 
+									to={'/jobs'} 
+									className='flex flex-col items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors'
+								>
+									<Briefcase size={24} />
+									<span className='text-xs mt-1'>Jobs</span>
 								</Link>
 								
 								<Link 

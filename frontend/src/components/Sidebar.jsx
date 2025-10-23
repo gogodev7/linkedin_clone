@@ -56,6 +56,14 @@ export default function Sidebar({ user }) {
 								<Bell className='mr-3' size={20} /> Notifications
 							</Link>
 						</li>
+						<li>
+							<Link
+								to='/jobs'
+								className='flex items-center py-2 px-3 rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors'
+							>
+								<Briefcase className='mr-3' size={20} /> Jobs
+							</Link>
+						</li>
 					</ul>
 				</nav>
 			</div>

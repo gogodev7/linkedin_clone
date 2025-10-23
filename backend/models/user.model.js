@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema(
 				endYear: Number,
 			},
 		],
+		// saved jobs for quick access
+		savedJobs: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Job',
+			},
+		],
 		connections: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
